@@ -12,12 +12,24 @@ import { Ionicons } from "@expo/vector-icons";
 export default function NotesScreen({ navigation, route }) {
   const [notes, setNotes] = useState([]);
 
-  firebase.firestore().collection("testing").add({
-    title: "testing if it works",
-    body: "This is to check the integration is working",
-    potato: true,
-    question: "why is potato bool here"
+//load up Firebase database on start. 
+// The snapshot keeps everything synced -- no need to refresh it later!
+
+useEffect(() => {
+  const unsubscribe = firebase
+  .firestore()
+  .collection("todos")
+  .onSnapshot((collection) => {  // let's get back a snapshot of this collection
+    const updatedNotes = collection.docs.map((doc) => doc.data());
+    setNotes(updatedNotes); // and set our notes state array to its docs
   });
+  
+  //unsubscribing when unmounting
+  return () => { 
+    unsubscribe();
+  };
+}, []);
+
 
   // This is to set up the top right button
   useEffect(() => {
@@ -46,6 +58,7 @@ export default function NotesScreen({ navigation, route }) {
         done: false,
         id: notes.length.toString(),
       };
+      firebase.firestore().collection("todos").add(newNote);
       setNotes([...notes, newNote]);
     }
   }, [route.params?.text]);

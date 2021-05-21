@@ -14,7 +14,6 @@ export default function NotesScreen({ navigation, route }) {
 
 //load up Firebase database on start. 
 // The snapshot keeps everything synced -- no need to refresh it later!
-
 useEffect(() => {
   const unsubscribe = firebase
   .firestore()
@@ -30,6 +29,21 @@ useEffect(() => {
   };
 }, []);
 
+//this deletes an individual note
+function deleteNote(id) {
+  console.log("deleting " + id);
+
+  firebase
+  .firestore()
+  .collection("todos")
+  .where("id", "==", id)
+  .get()
+  .then((querySnapshot) => {
+    querySnapshot.forEach((doc) => doc.ref.delete());
+  });
+
+
+}
 
   // This is to set up the top right button
   useEffect(() => {

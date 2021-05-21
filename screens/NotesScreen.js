@@ -18,7 +18,7 @@ export default function NotesScreen({ navigation, route }) {
 // The snapshot keeps everything synced -- no need to refresh it later!
 useEffect(() => {
   const unsubscribe = 
-  db.onSnapshot((collection) => {  // let's get back a snapshot of this collection
+  db.orderBy("created").onSnapshot((collection) => {  // let's get back a snapshot of this collection
     const updatedNotes = collection.docs.map((doc) => {
       //create our own object that pulls the ID into a property
       const noteObject ={
@@ -73,6 +73,7 @@ function deleteNote(id) {
       const newNote = {
         title: route.params.text,
         done: false,
+        created: firebase.firestore.FieldValue.serverTimestamp(),
 
       };
       db.add(newNote);

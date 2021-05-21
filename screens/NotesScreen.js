@@ -9,17 +9,25 @@ import {
 import firebase from "../database/firebaseDB"
 import { Ionicons } from "@expo/vector-icons";
 
+const db = firebase.firestore().collection("todos");
+
 export default function NotesScreen({ navigation, route }) {
   const [notes, setNotes] = useState([]);
 
 //load up Firebase database on start. 
 // The snapshot keeps everything synced -- no need to refresh it later!
 useEffect(() => {
-  const unsubscribe = firebase
-  .firestore()
-  .collection("todos")
-  .onSnapshot((collection) => {  // let's get back a snapshot of this collection
-    const updatedNotes = collection.docs.map((doc) => doc.data());
+  const unsubscribe = 
+  db.onSnapshot((collection) => {  // let's get back a snapshot of this collection
+    const updatedNotes = collection.docs.map((doc) => {
+      //create our own object that pulls the ID into a property
+      const noteObject ={
+        ...doc.data(),
+        id: doc.id,
+      };
+      console.log(noteObject);
+      return noteObject;
+    });
     setNotes(updatedNotes); // and set our notes state array to its docs
   });
   
@@ -33,16 +41,11 @@ useEffect(() => {
 function deleteNote(id) {
   console.log("deleting " + id);
 
-  firebase
-  .firestore()
-  .collection("todos")
-  .where("id", "==", id)
+  db.where("id", "==", id)
   .get()
   .then((querySnapshot) => {
     querySnapshot.forEach((doc) => doc.ref.delete());
   });
-
-
 }
 
   // This is to set up the top right button
@@ -70,10 +73,10 @@ function deleteNote(id) {
       const newNote = {
         title: route.params.text,
         done: false,
-        id: notes.length.toString(),
+
       };
-      firebase.firestore().collection("todos").add(newNote);
-      setNotes([...notes, newNote]);
+      db.add(newNote);
+
     }
   }, [route.params?.text]);
 
@@ -81,11 +84,11 @@ function deleteNote(id) {
     navigation.navigate("Add Screen");
   }
 
+  
   // This deletes an individual note
   function deleteNote(id) {
     console.log("Deleting " + id);
-    // To delete that item, we filter out the item we don't want
-    setNotes(notes.filter((item) => item.id !== id));
+    db.doc(id).delete();
   }
 
   // The function to render each row in our FlatList

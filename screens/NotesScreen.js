@@ -58,7 +58,7 @@ function deleteNote(id) {
             size={30}
             color="black"
             style={{
-              color: "#f55",
+              color: "#E86252",
               marginRight: 10,
             }}
           />
@@ -100,7 +100,7 @@ function deleteNote(id) {
           padding: 10,
           paddingTop: 20,
           paddingBottom: 20,
-          borderBottomColor: "#ccc",
+          borderBottomColor: "#E87EA1",
           borderBottomWidth: 1,
           flexDirection: "row",
           justifyContent: "space-between",
@@ -108,7 +108,7 @@ function deleteNote(id) {
       >
         <Text>{item.title}</Text>
         <TouchableOpacity onPress={() => deleteNote(item.id)}>
-          <Ionicons name="trash" size={16} color="#944" />
+          <Ionicons name="trash" size={16} color="#E86252" />
         </TouchableOpacity>
       </View>
     );
@@ -129,7 +129,7 @@ function deleteNote(id) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#ffc",
+    backgroundColor: "#EEEBD0",
     alignItems: "center",
     justifyContent: "center",
   },
